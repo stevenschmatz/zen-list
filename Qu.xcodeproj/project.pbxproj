@@ -13,6 +13,10 @@
 		280003981D683D670078340D /* Qu.xcdatamodeld in Sources */ = {isa = PBXBuildFile; fileRef = 280003961D683D670078340D /* Qu.xcdatamodeld */; };
 		2800039A1D683D670078340D /* Assets.xcassets in Resources */ = {isa = PBXBuildFile; fileRef = 280003991D683D670078340D /* Assets.xcassets */; };
 		2800039D1D683D670078340D /* LaunchScreen.storyboard in Resources */ = {isa = PBXBuildFile; fileRef = 2800039B1D683D670078340D /* LaunchScreen.storyboard */; };
+		280003A81D683DC30078340D /* Task.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003A71D683DC30078340D /* Task.swift */; };
+		280003AA1D6848F60078340D /* ComposeViewController.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003A91D6848F60078340D /* ComposeViewController.swift */; };
+		280003AC1D6849180078340D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003AB1D6849180078340D /* Constants.swift */; };
+		280003AE1D684ABE0078340D /* Autolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003AD1D684ABE0078340D /* Autolayout.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
@@ -24,6 +28,10 @@
 		280003991D683D670078340D /* Assets.xcassets */ = {isa = PBXFileReference; lastKnownFileType = folder.assetcatalog; path = Assets.xcassets; sourceTree = "<group>"; };
 		2800039C1D683D670078340D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/LaunchScreen.storyboard; sourceTree = "<group>"; };
 		2800039E1D683D670078340D /* Info.plist */ = {isa = PBXFileReference; lastKnownFileType = text.plist.xml; path = Info.plist; sourceTree = "<group>"; };
+		280003A71D683DC30078340D /* Task.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Task.swift; sourceTree = "<group>"; };
+		280003A91D6848F60078340D /* ComposeViewController.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = ComposeViewController.swift; sourceTree = "<group>"; };
+		280003AB1D6849180078340D /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
+		280003AD1D684ABE0078340D /* Autolayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Autolayout.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -56,8 +64,11 @@
 		2800038E1D683D670078340D /* Qu */ = {
 			isa = PBXGroup;
 			children = (
+				280003A41D683D730078340D /* Model */,
+				280003A51D683D880078340D /* View */,
+				280003A61D683D8C0078340D /* Controller */,
 				2800038F1D683D670078340D /* AppDelegate.swift */,
-				280003911D683D670078340D /* ViewController.swift */,
+				280003AD1D684ABE0078340D /* Autolayout.swift */,
 				280003931D683D670078340D /* Main.storyboard */,
 				280003991D683D670078340D /* Assets.xcassets */,
 				2800039B1D683D670078340D /* LaunchScreen.storyboard */,
@@ -65,6 +76,31 @@
 				280003961D683D670078340D /* Qu.xcdatamodeld */,
 			);
 			path = Qu;
+			sourceTree = "<group>";
+		};
+		280003A41D683D730078340D /* Model */ = {
+			isa = PBXGroup;
+			children = (
+				280003A71D683DC30078340D /* Task.swift */,
+				280003AB1D6849180078340D /* Constants.swift */,
+			);
+			name = Model;
+			sourceTree = "<group>";
+		};
+		280003A51D683D880078340D /* View */ = {
+			isa = PBXGroup;
+			children = (
+			);
+			name = View;
+			sourceTree = "<group>";
+		};
+		280003A61D683D8C0078340D /* Controller */ = {
+			isa = PBXGroup;
+			children = (
+				280003911D683D670078340D /* ViewController.swift */,
+				280003A91D6848F60078340D /* ComposeViewController.swift */,
+			);
+			name = Controller;
 			sourceTree = "<group>";
 		};
 /* End PBXGroup section */
@@ -138,9 +174,13 @@
 			isa = PBXSourcesBuildPhase;
 			buildActionMask = 2147483647;
 			files = (
+				280003AA1D6848F60078340D /* ComposeViewController.swift in Sources */,
+				280003A81D683DC30078340D /* Task.swift in Sources */,
 				280003981D683D670078340D /* Qu.xcdatamodeld in Sources */,
 				280003921D683D670078340D /* ViewController.swift in Sources */,
 				280003901D683D670078340D /* AppDelegate.swift in Sources */,
+				280003AE1D684ABE0078340D /* Autolayout.swift in Sources */,
+				280003AC1D6849180078340D /* Constants.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
