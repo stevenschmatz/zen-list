@@ -104,6 +104,23 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         }
     }
     
+    func addCardToStack() {
+        let view = StackCardView()
+        view.setTask("Write blog post for redesign process")
+        self.otherCardsContainer.addSubview(view)
+        
+        view.sizeToWidth(self.view.frame.size.width - 60)
+        view.sizeToHeight(250)
+        view.centerVerticallyInSuperview(offset: CGFloat(otherCards.count - 1) * 15)
+        view.centerHorizontallyInSuperview()
+        
+        self.otherCardsContainer.sendSubviewToBack(view)
+        
+        view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(otherCards.count), brightness: 1, alpha: 1.0)
+        
+        otherCards.insert(view, atIndex: 0)
+    }
+    
     // MARK: - Layout
     
     private lazy var containerTopConstraint: NSLayoutConstraint? = nil
@@ -140,9 +157,11 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     // MARK: - Navigation
     
     func addButtonPressed() {
-        let composeViewController = ComposeViewController()
-        composeViewController.delegate = self
-        presentViewController(composeViewController, animated: true, completion: nil)
+//        let composeViewController = ComposeViewController()
+//        composeViewController.delegate = self
+//        presentViewController(composeViewController, animated: true, completion: nil)
+        
+        addCardToStack()
     }
     
     // MARK: - UIScrollViewDelegate Methods
@@ -168,7 +187,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         }
         
         otherCardsContainer.layer.opacity = 0.85 + 0.15 * Float(percentCompleted)
-        containerTopConstraint?.constant = -15 * percentCompleted
+        containerTopConstraint?.constant = -15 * percentCompleted - 2
         view.setNeedsLayout()
         view.layoutIfNeeded()
     }
