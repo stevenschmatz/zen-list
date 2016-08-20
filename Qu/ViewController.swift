@@ -52,7 +52,7 @@ class ViewController: UIViewController {
     // MARK: - Navigation
     
     func addButtonPressed() {
-        
+        presentViewController(ComposeViewController(), animated: true, completion: nil)
     }
 }
 
