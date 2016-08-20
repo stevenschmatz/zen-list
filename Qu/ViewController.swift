@@ -85,6 +85,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return view
     }()
     
+    private lazy var otherCards: [StackCardView] = []
+    
     func addOtherCards() {
         
         for i in 0...5 {
@@ -97,6 +99,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             view.centerVerticallyInSuperview(offset: CGFloat(4-i) * 15)
             view.centerHorizontallyInSuperview()
             view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(5-i), brightness: 1, alpha: 1.0)
+            
+            otherCards.append(view)
         }
     }
     
@@ -190,6 +194,11 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             UIView.animateWithDuration(0.25, animations: { 
                 self.deleteImageView.layer.opacity = 0
             })
+        }
+        
+        if otherCards.count > 0 {
+            otherCards.first?.removeFromSuperview()
+            otherCards.removeFirst()
         }
         
         scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
