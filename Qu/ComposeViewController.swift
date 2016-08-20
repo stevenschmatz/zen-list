@@ -22,9 +22,15 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         NSNotificationCenter.defaultCenter().addObserver(self, selector: #selector(keyboardFrameDidChange), name: UIKeyboardDidChangeFrameNotification, object: nil)
     }
     
+    // MARK: - Status Bar
+    
     override func prefersStatusBarHidden() -> Bool {
         return true
     }
+    
+    // MARK: - Delegate
+    
+    var delegate: TaskDelegate? = nil
     
     // MARK: - UI Components
     
@@ -54,7 +60,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         
         button.backgroundColor = Constants.Colors.Green
         button.setAttributedTitle(attributedTitle, forState: .Normal)
-        button.addTarget(self, action: #selector(cancelPressed), forControlEvents: .TouchUpInside)
+        button.addTarget(self, action: #selector(confirmPressed), forControlEvents: .TouchUpInside)
         
         button.userInteractionEnabled = false
         button.layer.opacity = 0.0
@@ -82,12 +88,34 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     
     // MARK: - UITextViewDelegate Methods
     
+    var placeholderActive = true {
+        didSet {
+            if placeholderActive {
+                UIView.animateWithDuration(0.1, animations: {
+                    self.confirmButton.layer.opacity = 0.8
+                    }, completion: { (Bool) in
+                        self.confirmButton.userInteractionEnabled = false
+                })
+            } else {
+                UIView.animateWithDuration(0.1, animations: {
+                    self.confirmButton.layer.opacity = 1.0
+                    }, completion: { (Bool) in
+                        self.confirmButton.userInteractionEnabled = true
+                })
+            }
+        }
+    }
+    
+    var confirmButtonInView = false
+    
     func textView(textView: UITextView, shouldChangeTextInRange range: NSRange, replacementText text: String) -> Bool {
         
         let currentText: NSString = textView.text
         let updatedText = currentText.stringByReplacingCharactersInRange(range, withString:text)
         
         if updatedText.isEmpty {
+            
+            placeholderActive = true
             
             textView.text = placeholder
             textView.textColor = placeholderColor
@@ -97,10 +125,13 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         }
             
         else if textView.textColor == placeholderColor && !text.isEmpty {
+            
+            placeholderActive = false
+            
             textView.text = nil
             textView.textColor = UIColor.whiteColor()
             
-            guard confirmButton.userInteractionEnabled == false else {
+            guard !confirmButtonInView else {
                 return true
             }
             
@@ -112,6 +143,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
                 self.confirmButton.layer.opacity = 1.0
                 }, completion: { (Bool) -> Void in
                     self.confirmButton.userInteractionEnabled = true
+                    self.confirmButtonInView = true
             })
         }
         
@@ -139,11 +171,11 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         
         var constant = distanceFromBottom - self.view.frame.size.height
         
-        if confirmButton.userInteractionEnabled == false {
+        if confirmButtonInView {
             constant -= Constants.Sizes.ButtonHeight
         }
         
-        constraint.constant = distanceFromBottom - self.view.frame.size.height
+        constraint.constant = constant
         view.setNeedsLayout()
         
         UIView.animateWithDuration(0.1) {
@@ -175,6 +207,20 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     // MARK: - Navigation
     
     func cancelPressed() {
+        textView.resignFirstResponder()
+        dismissViewControllerAnimated(true, completion: nil)
+    }
+    
+    func confirmPressed() {
+        if placeholderActive {
+            let alert = UIAlertController(title: "Enter a task", message: "The text was empty. Try again!", preferredStyle: .Alert)
+            alert.addAction(UIAlertAction(title: "Cancel", style: .Cancel, handler: nil))
+            presentViewController(alert, animated: true, completion: nil)
+            return
+        }
+        
+        TaskQueue.push(textView.text)
+        delegate?.didAddTask()
         textView.resignFirstResponder()
         dismissViewControllerAnimated(true, completion: nil)
     }

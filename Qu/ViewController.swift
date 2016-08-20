@@ -8,7 +8,11 @@
 
 import UIKit
 
-class ViewController: UIViewController {
+protocol TaskDelegate {
+    func didAddTask()
+}
+
+class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
 
     override func viewDidLoad() {
         super.viewDidLoad()
@@ -39,6 +43,29 @@ class ViewController: UIViewController {
         return button
     }()
     
+    private lazy var scrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        
+        scrollView.pagingEnabled = true
+        let numberOfPages: CGFloat = 3
+        scrollView.contentSize = CGSizeMake(numberOfPages * self.view.frame.size.width, self.view.frame.size.height - Constants.Sizes.ButtonHeight)
+        scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
+        scrollView.showsHorizontalScrollIndicator = false
+        scrollView.delegate = self
+        
+        self.view.addSubview(scrollView)
+        return scrollView
+    }()
+    
+    private lazy var topCard: UIView = {
+        let view = UIView()
+        
+        view.backgroundColor = UIColor.whiteColor()
+        
+        self.scrollView.addSubview(view)
+        return view
+    }()
+    
     // MARK: - Layout
     
     override func updateViewConstraints() {
@@ -47,12 +74,44 @@ class ViewController: UIViewController {
         addButton.pinToBottomEdgeOfSuperview()
         addButton.pinToSideEdgesOfSuperview()
         addButton.sizeToHeight(64)
+        
+        scrollView.pinToTopEdgeOfSuperview()
+        scrollView.pinToSideEdgesOfSuperview()
+        scrollView.positionAboveItem(addButton)
+        
+        topCard.centerVerticallyInSuperview()
+        topCard.centerHorizontallyInSuperview(offset: self.view.frame.size.width)
+        topCard.sizeToWidthAndHeight(100)
     }
     
     // MARK: - Navigation
     
     func addButtonPressed() {
-        presentViewController(ComposeViewController(), animated: true, completion: nil)
+        let composeViewController = ComposeViewController()
+        composeViewController.delegate = self
+        presentViewController(composeViewController, animated: true, completion: nil)
+    }
+    
+    // MARK: - UIScrollViewDelegate Methods
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        guard scrollView.contentOffset.x != self.view.frame.size.width else {
+            return
+        }
+        
+        if scrollView.contentOffset.x == 0 {
+            print("Done")
+        } else {
+            print("Delete")
+        }
+        
+        scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
+    }
+    
+    // MARK: - TaskDelegate
+    
+    func didAddTask() {
+        
     }
 }
 
