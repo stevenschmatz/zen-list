@@ -102,10 +102,15 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     
     // MARK: - Layout
     
+    private lazy var containerTopConstraint: NSLayoutConstraint? = nil
+    
     override func updateViewConstraints() {
         super.updateViewConstraints()
         
-        otherCardsContainer.pinToEdgesOfSuperview()
+        containerTopConstraint = otherCardsContainer.pinToTopEdgeOfSuperview()
+        otherCardsContainer.pinToSideEdgesOfSuperview()
+        otherCardsContainer.sizeToHeight(self.view.frame.size.height)
+        
         addOtherCards()
         
         addButton.pinToBottomEdgeOfSuperview()
@@ -149,6 +154,19 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             deleteImageView.layer.opacity = Float(offset) / 100.0
             doneImageView.layer.opacity = 0
         }
+        
+        let percentCompleted: CGFloat
+        
+        if offset < 0 {
+            percentCompleted = -offset / self.view.frame.size.width
+        } else {
+            percentCompleted = offset / self.view.frame.size.width
+        }
+        
+        otherCardsContainer.layer.opacity = 0.85 + 0.15 * Float(percentCompleted)
+        containerTopConstraint?.constant = -15 * percentCompleted
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
