@@ -57,19 +57,56 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return scrollView
     }()
     
-    private lazy var topCard: UIView = {
-        let view = UIView()
-        
-        view.backgroundColor = UIColor.whiteColor()
-        
+    private lazy var doneImageView: UIImageView = {
+        let imageView = UIImageView(image: UIImage(named: "GreenCheck"))
+        imageView.layer.opacity = 0.0
+        self.view.addSubview(imageView)
+        return imageView
+    }()
+    
+    private lazy var deleteImageView: UIImageView = {
+        let deleteImageView = UIImageView(image: UIImage(named: "RedTrash"))
+        deleteImageView.layer.opacity = 0.0
+        self.view.addSubview(deleteImageView)
+        return deleteImageView
+    }()
+    
+    private lazy var topCard: StackCardView = {
+        let view = StackCardView()
+        view.setTask("Write blog post for redesign process")
         self.scrollView.addSubview(view)
         return view
     }()
+    
+    private lazy var otherCardsContainer: UIView = {
+        let view = UIView()
+        view.layer.opacity = 0.85
+        self.view.addSubview(view)
+        return view
+    }()
+    
+    func addOtherCards() {
+        
+        for i in 0...5 {
+            let view = StackCardView()
+            view.setTask("Write blog post for redesign process")
+            self.otherCardsContainer.addSubview(view)
+            
+            view.sizeToWidth(self.view.frame.size.width - 60)
+            view.sizeToHeight(250)
+            view.centerVerticallyInSuperview(offset: CGFloat(4-i) * 15)
+            view.centerHorizontallyInSuperview()
+            view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(5-i), brightness: 1, alpha: 1.0)
+        }
+    }
     
     // MARK: - Layout
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
+        
+        otherCardsContainer.pinToEdgesOfSuperview()
+        addOtherCards()
         
         addButton.pinToBottomEdgeOfSuperview()
         addButton.pinToSideEdgesOfSuperview()
@@ -81,7 +118,14 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         topCard.centerVerticallyInSuperview()
         topCard.centerHorizontallyInSuperview(offset: self.view.frame.size.width)
-        topCard.sizeToWidthAndHeight(100)
+        topCard.sizeToWidth(self.view.frame.size.width - 60)
+        topCard.sizeToHeight(250)
+        
+        for imageView in [doneImageView, deleteImageView] {
+            imageView.sizeToWidthAndHeight(82)
+            imageView.centerHorizontallyInSuperview()
+            imageView.pinToTopEdgeOfSuperview(offset: 50)
+        }
     }
     
     // MARK: - Navigation
@@ -94,6 +138,19 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     
     // MARK: - UIScrollViewDelegate Methods
     
+    func scrollViewDidScroll(scrollView: UIScrollView) {
+        let offset = scrollView.contentOffset.x - self.view.frame.size.width
+        
+        // "Done" swipe
+        if offset < 0 {
+            doneImageView.layer.opacity = -Float(offset) / 100.0
+            deleteImageView.layer.opacity = 0
+        } else {
+            deleteImageView.layer.opacity = Float(offset) / 100.0
+            doneImageView.layer.opacity = 0
+        }
+    }
+    
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
         guard scrollView.contentOffset.x != self.view.frame.size.width else {
             return
@@ -101,8 +158,20 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         if scrollView.contentOffset.x == 0 {
             print("Done")
+            
+            doneImageView.layer.opacity = 1
+            
+            UIView.animateWithDuration(0.25, animations: { 
+                self.doneImageView.layer.opacity = 0
+            })
         } else {
             print("Delete")
+            
+            deleteImageView.layer.opacity = 1
+            
+            UIView.animateWithDuration(0.25, animations: { 
+                self.deleteImageView.layer.opacity = 0
+            })
         }
         
         scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
