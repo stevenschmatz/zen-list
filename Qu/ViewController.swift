@@ -352,7 +352,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             UIView.animateWithDuration(0.25, animations: {
                 self.doneImageView.layer.opacity = 0
             })
-        } else {
+        } else if horizontalScrollView.contentOffset.x == 2 * self.view.frame.size.width {
             didDeleteTask()
             
             deleteImageView.layer.opacity = 1
@@ -370,9 +370,17 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             return
         }
         
-        backCardTopConstraints.removeFirst()
-        backCardWidthConstraints.removeFirst()
-        backCardHeightConstraints.removeFirst()
+        if !backCardTopConstraints.isEmpty {
+            backCardTopConstraints.removeFirst()
+        }
+        
+        if !backCardWidthConstraints.isEmpty {
+            backCardWidthConstraints.removeFirst()
+        }
+        
+        if !backCardHeightConstraints.isEmpty {
+            backCardHeightConstraints.removeFirst()
+        }
         
         if let constraint = backCardTopConstraints.first {
             view.removeConstraint(constraint)
@@ -385,7 +393,10 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         }
         
         otherCards.first?.removeFromSuperview()
-        otherCards.removeFirst()
+        
+        if !otherCards.isEmpty {
+            otherCards.removeFirst()
+        }
         
         for card in otherCards {
             card.index -= 1
@@ -418,14 +429,14 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      */
     func didFinishTask() {
         // Maybe in the future, can do something actually useful?
-        print(TaskQueue.pop()!)
+        print("Finished \(TaskQueue.pop()!)")
     }
     
     /**
      Removes the task from the task queue, with a failure status.
      */
     func didDeleteTask() {
-        print(TaskQueue.pop()!)
+        print("Deleted \(TaskQueue.pop()!)")
     }
     
     // MARK: - TaskDelegate
