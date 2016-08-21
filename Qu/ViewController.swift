@@ -20,7 +20,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         super.viewDidLoad()
         
         view.backgroundColor = Constants.Colors.Purple
-        view.setNeedsLayout()
+        
+        setViewConstraints()
     }
     
     // MARK: - Status Bar
@@ -131,8 +132,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     private lazy var backCardHeightConstraints: [NSLayoutConstraint] = []
     private lazy var backCardWidthConstraints: [NSLayoutConstraint] = []
     
-    override func updateViewConstraints() {
-        super.updateViewConstraints()
+    func setViewConstraints() {
         
         addButton.pinToBottomEdgeOfSuperview()
         addButton.pinToSideEdgesOfSuperview()
@@ -143,8 +143,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         horizontalScrollView.positionAboveItem(addButton)
         
         topCardVerticalCenterConstraint = topCard.centerVerticallyInSuperview()
-        topCard.centerHorizontallyInSuperview(offset: self.view.frame.size.width)
         topCardWidthConstraint = topCard.sizeToWidth(self.view.frame.size.width - 60)
+        topCard.centerHorizontallyInSuperview(offset: self.view.frame.size.width)
         topCard.sizeToHeight(Constants.Sizes.CardHeight)
         
         for imageView in [doneImageView, deleteImageView] {
@@ -255,6 +255,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             constraint.constant = backCardTopConstraintMin + difference * ratio
         }
         
+        print(backCardTopConstraints.count)
+        
         // Change sizes of back cards
         
         let difference = Constants.Sizes.CardHeight - Constants.Sizes.BackCardHeightUnfolded
@@ -308,8 +310,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         backCardTopConstraints.first?.constant = firstBackCardTopConstraintMax - difference * ratio
         
         for card in otherCards {
-            print(card.index)
-            print(ratio)
             card.ratio = card.index * 0.1 - ratio * 0.1
         }
         
@@ -334,6 +334,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     }
     
     private func horizontalScrollViewDidEndDecelerating() {
+        
+        // Ignore when the scrollView returns to default position
         guard horizontalScrollView.contentOffset.x != self.view.frame.size.width else {
             return
         }
@@ -356,11 +358,36 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             })
         }
         
-        if allTasksCompleted {
+        guard !allTasksCompleted else {
             didFinishAllTasks()
-        } else {
-            topCard.setTask(TaskQueue.allItems().last!)
+            horizontalScrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
+            backCardTopConstraints = []
+            
+            return
         }
+        
+        backCardTopConstraints.removeFirst()
+        backCardWidthConstraints.removeFirst()
+        backCardHeightConstraints.removeFirst()
+        
+        if let constraint = backCardTopConstraints.first {
+            view.removeConstraint(constraint)
+        }
+        
+        if otherCards.count >= 2 {
+            if let constraint = otherCards[1].pinTopEdgeToTopEdgeOfItem(topCard, offset: 20) {
+                backCardTopConstraints.insert(constraint, atIndex: 0)
+            }
+        }
+        
+        otherCards.first?.removeFromSuperview()
+        otherCards.removeFirst()
+        
+        for card in otherCards {
+            card.index -= 1
+        }
+        
+        topCard.setTask(TaskQueue.allItems().last!)
         
         horizontalScrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
     }
@@ -407,6 +434,27 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             topCardActive = true
             return
         }
+        
+        let card = StackCardView()
+        card.setTask(tasks.first!)
+        card.index = CGFloat(tasks.count)
+        otherCards.append(card)
+        self.view.addSubview(card)
+        
+        backCardHeightConstraints.append(card.sizeToHeight(Constants.Sizes.CardHeight))
+        backCardWidthConstraints.append(card.sizeToWidth(self.view.frame.size.width - 60))
+        card.centerHorizontallyInSuperview()
+        
+        if tasks.count == 2 {
+            backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(topCard, offset: 20)!)
+        } else {
+            backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(otherCards[tasks.count - 3], offset: 20)!)
+        }
+        
+        view.sendSubviewToBack(card)
+        
+        view.setNeedsLayout()
+        view.layoutIfNeeded()
     }
 }
 

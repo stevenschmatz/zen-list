@@ -191,7 +191,10 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     override func updateViewConstraints() {
         super.updateViewConstraints()
         
-        cancelButtonBottomConstraint = cancelButton.pinToBottomEdgeOfSuperview(offset: 0)
+        if cancelButtonBottomConstraint == nil {
+            cancelButtonBottomConstraint = cancelButton.pinToBottomEdgeOfSuperview(offset: 0)
+        }
+        
         cancelButton.pinToSideEdgesOfSuperview()
         cancelButton.sizeToHeight(Constants.Sizes.ButtonHeight)
         
