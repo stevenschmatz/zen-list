@@ -311,7 +311,7 @@
 				DEVELOPMENT_TEAM = S57X9JL8K7;
 				INFOPLIST_FILE = Qu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = StevenSchmatz.Qu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.StevenSchmatz.ZenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 2.3;
 			};
@@ -324,7 +324,7 @@
 				DEVELOPMENT_TEAM = S57X9JL8K7;
 				INFOPLIST_FILE = Qu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
-				PRODUCT_BUNDLE_IDENTIFIER = StevenSchmatz.Qu;
+				PRODUCT_BUNDLE_IDENTIFIER = com.StevenSchmatz.ZenList;
 				PRODUCT_NAME = "$(TARGET_NAME)";
 				SWIFT_VERSION = 2.3;
 			};

@@ -73,7 +73,21 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
     }()
     
     let placeholderColor = UIColor(white: 1.0, alpha: 0.39)
-    let placeholder = "Begin redesign process for the tasks app"
+    
+    private lazy var placeholder: String = {
+        let options = [
+            "Begin redesign process for tasks app",
+            "Give Kelly a call about housing",
+            "Take Spot for a walk",
+            "Publish the blog post about sustainable practices",
+            "Review the top-secret documents",
+            "Practice the proposal with colleagues",
+            "Send final version of the flyer to journalists"
+        ]
+        
+        let randomIndex = Int(arc4random_uniform(UInt32(options.count)))
+        return options[randomIndex]
+    }()
     
     private lazy var textView: UITextView = {
         let textView = UITextView()
