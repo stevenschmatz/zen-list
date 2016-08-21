@@ -1,6 +1,6 @@
 //
 //  Task.swift
-//  Qu
+//  Zen List
 //
 //  Created by Steven on 8/20/16.
 //  Copyright © 2016 Steven Schmatz. All rights reserved.
@@ -114,8 +114,8 @@ func initializeTaskQueue() {
             "Welcome to Zen List! Swipe right to complete this task.",
             "Zen List is a productivity app focused on doing things one at a time.",
             "We’ve all been there - our to-do list is overflowing. It’s anxiety-inducing. You don’t know where to start, so you procrastinate.",
-            "Here, you deal with things one at a time. By the way, you can swipe left to delete tasks you don't need anymore.",
-            "Sometimes, it's useful to see what's on your plate for the day. Swipe up to peek at it.",
+            "Here, you deal with things one at a time. You can swipe left to delete tasks you don't need anymore.",
+            "Sometimes, though, it's useful to see what's on your plate for the day. Swipe up to peek at it.",
             "Tasks are organized in a queue, so the tasks that you commit to first, you finish first.",
             "After you're done with your tasks for the day, you can see some numbers on your productivity.",
             "Clear your mind and be more productive than ever."
