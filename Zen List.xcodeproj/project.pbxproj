@@ -18,10 +18,11 @@
 		280003AC1D6849180078340D /* Constants.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003AB1D6849180078340D /* Constants.swift */; };
 		280003AE1D684ABE0078340D /* Autolayout.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003AD1D684ABE0078340D /* Autolayout.swift */; };
 		280003B01D6864BA0078340D /* StackCardView.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280003AF1D6864BA0078340D /* StackCardView.swift */; };
+		280E8F401D69AF2400177780 /* Analytics.swift in Sources */ = {isa = PBXBuildFile; fileRef = 280E8F3F1D69AF2400177780 /* Analytics.swift */; };
 /* End PBXBuildFile section */
 
 /* Begin PBXFileReference section */
-		2800038C1D683D670078340D /* Qu.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = Qu.app; sourceTree = BUILT_PRODUCTS_DIR; };
+		2800038C1D683D670078340D /* Zen List.app */ = {isa = PBXFileReference; explicitFileType = wrapper.application; includeInIndex = 0; path = "Zen List.app"; sourceTree = BUILT_PRODUCTS_DIR; };
 		2800038F1D683D670078340D /* AppDelegate.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = AppDelegate.swift; sourceTree = "<group>"; };
 		280003911D683D670078340D /* ViewController.swift */ = {isa = PBXFileReference; lastKnownFileType = sourcecode.swift; path = ViewController.swift; sourceTree = "<group>"; };
 		280003941D683D670078340D /* Base */ = {isa = PBXFileReference; lastKnownFileType = file.storyboard; name = Base; path = Base.lproj/Main.storyboard; sourceTree = "<group>"; };
@@ -34,6 +35,7 @@
 		280003AB1D6849180078340D /* Constants.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Constants.swift; sourceTree = "<group>"; };
 		280003AD1D684ABE0078340D /* Autolayout.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Autolayout.swift; sourceTree = "<group>"; };
 		280003AF1D6864BA0078340D /* StackCardView.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = StackCardView.swift; sourceTree = "<group>"; };
+		280E8F3F1D69AF2400177780 /* Analytics.swift */ = {isa = PBXFileReference; fileEncoding = 4; lastKnownFileType = sourcecode.swift; path = Analytics.swift; sourceTree = "<group>"; };
 /* End PBXFileReference section */
 
 /* Begin PBXFrameworksBuildPhase section */
@@ -58,7 +60,7 @@
 		2800038D1D683D670078340D /* Products */ = {
 			isa = PBXGroup;
 			children = (
-				2800038C1D683D670078340D /* Qu.app */,
+				2800038C1D683D670078340D /* Zen List.app */,
 			);
 			name = Products;
 			sourceTree = "<group>";
@@ -85,6 +87,7 @@
 			children = (
 				280003A71D683DC30078340D /* Task.swift */,
 				280003AB1D6849180078340D /* Constants.swift */,
+				280E8F3F1D69AF2400177780 /* Analytics.swift */,
 			);
 			name = Model;
 			sourceTree = "<group>";
@@ -109,9 +112,9 @@
 /* End PBXGroup section */
 
 /* Begin PBXNativeTarget section */
-		2800038B1D683D670078340D /* Qu */ = {
+		2800038B1D683D670078340D /* Zen List */ = {
 			isa = PBXNativeTarget;
-			buildConfigurationList = 280003A11D683D670078340D /* Build configuration list for PBXNativeTarget "Qu" */;
+			buildConfigurationList = 280003A11D683D670078340D /* Build configuration list for PBXNativeTarget "Zen List" */;
 			buildPhases = (
 				280003881D683D670078340D /* Sources */,
 				280003891D683D670078340D /* Frameworks */,
@@ -121,9 +124,9 @@
 			);
 			dependencies = (
 			);
-			name = Qu;
+			name = "Zen List";
 			productName = Qu;
-			productReference = 2800038C1D683D670078340D /* Qu.app */;
+			productReference = 2800038C1D683D670078340D /* Zen List.app */;
 			productType = "com.apple.product-type.application";
 		};
 /* End PBXNativeTarget section */
@@ -138,10 +141,12 @@
 				TargetAttributes = {
 					2800038B1D683D670078340D = {
 						CreatedOnToolsVersion = 7.3.1;
+						DevelopmentTeam = S57X9JL8K7;
+						LastSwiftMigration = 0800;
 					};
 				};
 			};
-			buildConfigurationList = 280003871D683D670078340D /* Build configuration list for PBXProject "Qu" */;
+			buildConfigurationList = 280003871D683D670078340D /* Build configuration list for PBXProject "Zen List" */;
 			compatibilityVersion = "Xcode 3.2";
 			developmentRegion = English;
 			hasScannedForEncodings = 0;
@@ -154,7 +159,7 @@
 			projectDirPath = "";
 			projectRoot = "";
 			targets = (
-				2800038B1D683D670078340D /* Qu */,
+				2800038B1D683D670078340D /* Zen List */,
 			);
 		};
 /* End PBXProject section */
@@ -185,6 +190,7 @@
 				280003901D683D670078340D /* AppDelegate.swift in Sources */,
 				280003AE1D684ABE0078340D /* Autolayout.swift in Sources */,
 				280003AC1D6849180078340D /* Constants.swift in Sources */,
+				280E8F401D69AF2400177780 /* Analytics.swift in Sources */,
 			);
 			runOnlyForDeploymentPostprocessing = 0;
 		};
@@ -297,10 +303,12 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = S57X9JL8K7;
 				INFOPLIST_FILE = Qu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = StevenSchmatz.Qu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Debug;
 		};
@@ -308,17 +316,19 @@
 			isa = XCBuildConfiguration;
 			buildSettings = {
 				ASSETCATALOG_COMPILER_APPICON_NAME = AppIcon;
+				DEVELOPMENT_TEAM = S57X9JL8K7;
 				INFOPLIST_FILE = Qu/Info.plist;
 				LD_RUNPATH_SEARCH_PATHS = "$(inherited) @executable_path/Frameworks";
 				PRODUCT_BUNDLE_IDENTIFIER = StevenSchmatz.Qu;
 				PRODUCT_NAME = "$(TARGET_NAME)";
+				SWIFT_VERSION = 2.3;
 			};
 			name = Release;
 		};
 /* End XCBuildConfiguration section */
 
 /* Begin XCConfigurationList section */
-		280003871D683D670078340D /* Build configuration list for PBXProject "Qu" */ = {
+		280003871D683D670078340D /* Build configuration list for PBXProject "Zen List" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				2800039F1D683D670078340D /* Debug */,
@@ -327,13 +337,14 @@
 			defaultConfigurationIsVisible = 0;
 			defaultConfigurationName = Release;
 		};
-		280003A11D683D670078340D /* Build configuration list for PBXNativeTarget "Qu" */ = {
+		280003A11D683D670078340D /* Build configuration list for PBXNativeTarget "Zen List" */ = {
 			isa = XCConfigurationList;
 			buildConfigurations = (
 				280003A21D683D670078340D /* Debug */,
 				280003A31D683D670078340D /* Release */,
 			);
 			defaultConfigurationIsVisible = 0;
+			defaultConfigurationName = Release;
 		};
 /* End XCConfigurationList section */
 

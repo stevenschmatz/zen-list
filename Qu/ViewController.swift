@@ -207,7 +207,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     private func verticalScrollViewDidScroll() {
         let offset = verticalScrollView.contentOffset.y
         
-        guard offset >= 0 else {
+        guard offset >= 0 && offset <= (self.view.frame.size.height - Constants.Sizes.ButtonHeight) else {
             return
         }
         
@@ -254,8 +254,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             
             constraint.constant = backCardTopConstraintMin + difference * ratio
         }
-        
-        print(backCardTopConstraints.count)
         
         // Change sizes of back cards
         
@@ -414,14 +412,14 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      */
     func didFinishTask() {
         // Maybe in the future, can do something actually useful?
-        print(TaskQueue.pop())
+        print(TaskQueue.pop()!)
     }
     
     /**
      Removes the task from the task queue, with a failure status.
      */
     func didDeleteTask() {
-        print(TaskQueue.pop())
+        print(TaskQueue.pop()!)
     }
     
     // MARK: - TaskDelegate
