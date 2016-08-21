@@ -113,10 +113,12 @@ func initializeTaskQueue() {
         TaskQueue.items = [
             "Welcome to Zen List! Swipe right to complete this task.",
             "Zen List is a productivity app focused on doing things one at a time.",
-            "The only item you can interact with is the top item. You can swipe left to delete it (try it!).",
-            "Sometimes you have to see what's ahead - swipe up to view future tasks.",
-            "When you add a task, it's pushed onto the back of the queue - the tasks you record first, you do first.",
-            "When you're done with all of your tasks, you can see some numbers on your productivity. Enjoy!"
+            "We’ve all been there - our to-do list is overflowing. It’s anxiety-inducing. You don’t know where to start, so you procrastinate.",
+            "Here, you deal with things one at a time. You can swipe left to delete tasks you don't need anymore.",
+            "Sometimes, though, it's useful to see what's on your plate for the day. Swipe up to peek at it.",
+            "Tasks are organized in a queue, so the tasks that you commit to first, you finish first.",
+            "After you're done with your tasks for the day, you can see some numbers on your productivity.",
+            "Clear your mind and be more productive than ever."
         ].reverse()
         
         NSUserDefaults.standardUserDefaults().setBool(true, forKey: "onboarding_complete")
