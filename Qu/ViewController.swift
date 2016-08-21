@@ -21,6 +21,12 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         view.backgroundColor = Constants.Colors.Purple
         
+        if TaskQueue.allItems().isEmpty {
+            showSummaryView(false)
+        } else {
+            hideSummaryView(false)
+        }
+        
         setViewConstraints()
     }
     
@@ -124,6 +130,12 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return cards
     }()
     
+    private lazy var summaryView: SummaryView = {
+        let summaryView = SummaryView()
+        self.view.addSubview(summaryView)
+        return summaryView
+    }()
+    
     // MARK: - Layout
     
     private lazy var topCardWidthConstraint: NSLayoutConstraint? = nil
@@ -173,6 +185,10 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         }
         
         view.bringSubviewToFront(horizontalScrollView)
+        
+        summaryView.pinToSideEdgesOfSuperview(offset: 60)
+        summaryView.sizeToHeight(325)
+        summaryView.centerInSuperview(offset: -20)
     }
     
     // MARK: - Navigation
@@ -417,6 +433,12 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         didSet {
             horizontalScrollView.layer.opacity = topCardActive ? 1 : 0
             horizontalScrollView.userInteractionEnabled = topCardActive
+            
+            if topCardActive {
+                hideSummaryView(false)
+            } else {
+                showSummaryView()
+            }
         }
     }
     
@@ -428,8 +450,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      Removes the task from the task queue, with a success status.
      */
     func didFinishTask() {
-        // Maybe in the future, can do something actually useful?
-        print("Finished \(TaskQueue.pop()!)")
+        let task = TaskQueue.pop()!
+        Analytics.sharedInstance.recordTask(task)
     }
     
     /**
@@ -471,6 +493,30 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         view.setNeedsLayout()
         view.layoutIfNeeded()
+    }
+    
+    // MARK: - Summary View
+    
+    func showSummaryView(animated: Bool = true) {
+        summaryView.reloadData()
+        
+        if animated {
+            UIView.animateWithDuration(0.5) {
+                self.summaryView.layer.opacity = 1
+            }
+        } else {
+            self.summaryView.layer.opacity = 1
+        }
+    }
+    
+    func hideSummaryView(animated: Bool = true) {
+        if animated {
+            UIView.animateWithDuration(0.5) {
+                self.summaryView.layer.opacity = 0
+            }
+        } else {
+            self.summaryView.layer.opacity = 0
+        }
     }
 }
 

@@ -108,4 +108,18 @@ class PersistentQueue<T>: Queue<T> {
     }
 }
 
+func initializeTaskQueue() {
+    if !NSUserDefaults.standardUserDefaults().boolForKey("onboarding_complete") {
+        TaskQueue.items = [
+            "Welcome to Zen List! Swipe right to complete this task.",
+            "Zen List is a productivity app focused on doing things one at a time.",
+            "The only item you can interact with is the top item. You can swipe left to delete it (try it!).",
+            "Sometimes you have to see what's ahead - swipe up to view future tasks.",
+            "When you add a task, it's pushed onto the back of the queue - the tasks you record first, you do first.",
+            "When you're done with all of your tasks, you can see some numbers on your productivity. Enjoy!"
+        ].reverse()
+        //NSUserDefaults.standardUserDefaults().setBool(true, forKey: "onboarding_complete")
+    }
+}
+
 var TaskQueue = PersistentQueue<Task>()

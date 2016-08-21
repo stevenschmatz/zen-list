@@ -7,6 +7,8 @@
 //
 
 import Foundation
+import UIKit
+import CoreData
 
 class Analytics {
     
@@ -24,15 +26,63 @@ class Analytics {
     
     var tasksFinishedToday: Int {
         get {
-            return 0
+            return fetchTaskObjects(fromDate: NSCalendar.currentCalendar().startOfDayForDate(NSDate())).count
         }
     }
     
     var tasksFinishedThisWeek: Int {
         get {
-            return 0
+            let calendar = NSCalendar.currentCalendar()
+            var startOfTheWeek: NSDate?
+            var interval = NSTimeInterval(0)
+            
+            calendar.rangeOfUnit(.WeekOfMonth, startDate: &startOfTheWeek, interval: &interval, forDate: NSDate())
+            
+            return fetchTaskObjects(fromDate: startOfTheWeek!).count
         }
     }
     
+    var tasksFinishedThisMonth: Int {
+        get {
+            return fetchTaskObjects(fromDate: NSDate().dateByAddingTimeInterval(-30*24*60*60)).count
+        }
+    }
     
+    // MARK: - Core Data
+    
+    private lazy var managedContext: NSManagedObjectContext = {
+        let appDelegate = UIApplication.sharedApplication().delegate as! AppDelegate
+        return appDelegate.managedObjectContext
+    }()
+    
+    private lazy var taskEntity: NSEntityDescription = {
+        return NSEntityDescription.entityForName("Task", inManagedObjectContext: self.managedContext)!
+    }()
+    
+    func fetchTaskObjects(fromDate date: NSDate) -> [NSManagedObject] {
+        let fetchRequest = NSFetchRequest(entityName: "Task")
+        let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
+        fetchRequest.sortDescriptors = [sortDescriptor]
+        let predicate = NSPredicate(format: "date > %@", date)
+        fetchRequest.predicate = predicate
+        
+        let result = try! managedContext.executeFetchRequest(fetchRequest)
+        
+        print(result)
+        
+        return result as! [NSManagedObject]
+    }
+    
+    func recordTask(task: Task) {
+        let taskObject = NSManagedObject(entity: taskEntity, insertIntoManagedObjectContext: managedContext)
+        
+        taskObject.setValue(task, forKey: "task")
+        taskObject.setValue(NSDate(), forKey: "date")
+        
+        do {
+            try managedContext.save()
+        } catch let error as NSError  {
+            print("Could not save \(error), \(error.userInfo)")
+        }
+    }
 }
