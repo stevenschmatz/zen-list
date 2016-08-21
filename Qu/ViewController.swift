@@ -73,7 +73,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     
     private lazy var topCard: StackCardView = {
         let view = StackCardView()
-        view.setTask("Write blog post for redesign process")
+        view.setTask(TaskQueue.allItems().last ?? "test")
         self.scrollView.addSubview(view)
         return view
     }()
@@ -89,36 +89,27 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     
     func addOtherCards() {
         
-        for i in 0...5 {
+        let tasks = TaskQueue.allItems().reverse()
+        
+        for (index, task) in tasks.enumerate() {
+            
+            // Top card is shown already
+            if index == 0 {
+                continue
+            }
+            
             let view = StackCardView()
-            view.setTask("Write blog post for redesign process")
+            view.setTask(task)
             self.otherCardsContainer.addSubview(view)
             
             view.sizeToWidth(self.view.frame.size.width - 60)
             view.sizeToHeight(250)
-            view.centerVerticallyInSuperview(offset: CGFloat(4-i) * 15)
+            view.centerVerticallyInSuperview(offset: CGFloat(TaskQueue.allItems().count - index - 2) * 15)
             view.centerHorizontallyInSuperview()
-            view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(5-i), brightness: 1, alpha: 1.0)
+            view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(TaskQueue.allItems().count - index - 1), brightness: 1, alpha: 1.0)
             
             otherCards.append(view)
         }
-    }
-    
-    func addCardToStack() {
-        let view = StackCardView()
-        view.setTask("Write blog post for redesign process")
-        self.otherCardsContainer.addSubview(view)
-        
-        view.sizeToWidth(self.view.frame.size.width - 60)
-        view.sizeToHeight(250)
-        view.centerVerticallyInSuperview(offset: CGFloat(otherCards.count - 1) * 15)
-        view.centerHorizontallyInSuperview()
-        
-        self.otherCardsContainer.sendSubviewToBack(view)
-        
-        view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(otherCards.count), brightness: 1, alpha: 1.0)
-        
-        otherCards.insert(view, atIndex: 0)
     }
     
     // MARK: - Layout
@@ -157,11 +148,9 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     // MARK: - Navigation
     
     func addButtonPressed() {
-//        let composeViewController = ComposeViewController()
-//        composeViewController.delegate = self
-//        presentViewController(composeViewController, animated: true, completion: nil)
-        
-        addCardToStack()
+        let composeViewController = ComposeViewController()
+        composeViewController.delegate = self
+        presentViewController(composeViewController, animated: true, completion: nil)
     }
     
     // MARK: - UIScrollViewDelegate Methods
@@ -198,7 +187,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         }
         
         if scrollView.contentOffset.x == 0 {
-            print("Done")
+            didFinishTask()
             
             doneImageView.layer.opacity = 1
             
@@ -206,10 +195,10 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
                 self.doneImageView.layer.opacity = 0
             })
         } else {
-            print("Delete")
+            didDeleteTask()
             
             deleteImageView.layer.opacity = 1
-            
+
             UIView.animateWithDuration(0.25, animations: { 
                 self.deleteImageView.layer.opacity = 0
             })
@@ -220,13 +209,77 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             otherCards.removeFirst()
         }
         
+        if allTasksCompleted {
+            didFinishAllTasks()
+        } else {
+            topCard.setTask(TaskQueue.allItems().last!)
+        }
+        
         scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
+    }
+    
+    private var allTasksCompleted: Bool {
+        get {
+            return TaskQueue.allItems().isEmpty
+        }
+    }
+    
+    private var topCardActive: Bool = !TaskQueue.allItems().isEmpty {
+        didSet {
+            scrollView.layer.opacity = topCardActive ? 1 : 0
+            scrollView.userInteractionEnabled = topCardActive
+        }
+    }
+    
+    private func didFinishAllTasks() {
+        topCardActive = false
+    }
+    
+    /**
+     Removes the task from the task queue, with a success status.
+     */
+    func didFinishTask() {
+        // Maybe in the future, can do something actually useful?
+        print(TaskQueue.pop())
+    }
+    
+    /**
+     Removes the task from the task queue, with a failure status.
+     */
+    func didDeleteTask() {
+        print(TaskQueue.pop())
     }
     
     // MARK: - TaskDelegate
     
     func didAddTask() {
+        let tasks = TaskQueue.allItems()
         
+        if tasks.count == 1 {
+            topCard.setTask(tasks.first!)
+            topCardActive = true
+            return
+        }
+        
+        let view = StackCardView()
+        view.setTask(TaskQueue.allItems().first!)
+        self.otherCardsContainer.addSubview(view)
+        
+        view.sizeToWidth(self.view.frame.size.width - 60)
+        view.sizeToHeight(250)
+        view.centerVerticallyInSuperview(offset: CGFloat(otherCards.count - 1) * 15)
+        view.centerHorizontallyInSuperview()
+        
+        self.otherCardsContainer.sendSubviewToBack(view)
+        
+        view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(otherCards.count), brightness: 1, alpha: 1.0)
+        view.layer.opacity = 0
+        
+        UIView.animateWithDuration(0.25) {
+            view.layer.opacity = 1
+        }
+        
+        otherCards.insert(view, atIndex: 0)
     }
 }
 
