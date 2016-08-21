@@ -204,7 +204,7 @@ class ComposeViewController: UIViewController, UITextViewDelegate {
         
         textView.pinToSideEdgesOfSuperview(offset: 20)
         textView.pinToTopEdgeOfSuperview(offset: 40)
-        textView.sizeToHeight(100)
+        textView.positionAboveItem(cancelButton, offset: 20)
     }
     
     // MARK: - Navigation
