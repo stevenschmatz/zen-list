@@ -106,16 +106,16 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         var cards: [StackCardView] = []
         
-        let tasks: [Task] = [Task("One"), Task("Two"), Task("Three"), Task("Four"), Task("Five"), Task("Six")]
+        let tasks = TaskQueue.allItems()
         
-        for (index, task) in tasks.enumerate() {
+        for (index, task) in tasks.reverse().enumerate() {
             if index == 0 {
                 continue
             }
             
             let card = StackCardView()
             card.setTask(task)
-            card.ratio = CGFloat(index) * 0.1
+            card.index = CGFloat(index)
             cards.append(card)
             self.view.addSubview(card)
         }
@@ -293,13 +293,25 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             doneImageView.layer.opacity = 0
         }
         
-//        let percentCompleted: CGFloat
-//        
-//        if offset < 0 {
-//            percentCompleted = -offset / self.view.frame.size.width
-//        } else {
-//            percentCompleted = offset / self.view.frame.size.width
-//        }
+        let ratio: CGFloat
+        
+        if offset < 0 {
+            ratio = -offset / self.view.frame.size.width
+        } else {
+            ratio = offset / self.view.frame.size.width
+        }
+        
+        let firstBackCardTopConstraintMax: CGFloat = 20
+        let firstBackCardTopConstraintMin: CGFloat = 0
+        let difference: CGFloat = firstBackCardTopConstraintMax - firstBackCardTopConstraintMin
+        
+        backCardTopConstraints.first?.constant = firstBackCardTopConstraintMax - difference * ratio
+        
+        for card in otherCards {
+            print(card.index)
+            print(ratio)
+            card.ratio = card.index * 0.1 - ratio * 0.1
+        }
         
         view.setNeedsLayout()
         view.layoutIfNeeded()

@@ -50,6 +50,12 @@ class StackCardView: UIView {
         }
     }
     
+    var index: CGFloat = 0 {
+        didSet {
+            ratio = index * 0.1
+        }
+    }
+    
     func setFontSize(size: CGFloat) {
         label.font = UIFont.systemFontOfSize(size)
     }
