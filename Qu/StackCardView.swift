@@ -44,8 +44,19 @@ class StackCardView: UIView {
     
     var ratio: CGFloat = 0 {
         didSet {
+            let alpha: CGFloat
+            
+            if index == 7 {
+                alpha = index - ratio * 10
+            } else if index > 7 {
+                alpha = 0
+            } else {
+                alpha = 1
+            }
+            
             // Sets the amount of fade. White is 0, purple is 1.
-            backgroundColor = UIColor(hue: 267/360.0, saturation: min(ratio, 1), brightness: 1, alpha: 1.0)
+            backgroundColor = UIColor(hue: 267/360.0, saturation: min(ratio, 1), brightness: 1, alpha: alpha)
+            
             label.textColor = UIColor(white: 0, alpha: max(0.15, 1 - ratio * 1.30))
         }
     }

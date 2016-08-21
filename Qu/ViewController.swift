@@ -316,6 +316,12 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     }
     
     private func verticalScrollViewDidEndDecelerating() {
+        
+        let offset = verticalScrollView.contentOffset.y
+        
+        // Horizontal scrolling only enabled when cards are stacked
+        horizontalScrollView.scrollEnabled = (offset == 0)
+        
         for card in otherCards {
             card.fadeInText()
         }
@@ -436,7 +442,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         let card = StackCardView()
         card.setTask(tasks.first!)
         card.index = CGFloat(tasks.count)
-        otherCards.append(card)
         self.view.addSubview(card)
         
         backCardHeightConstraints.append(card.sizeToHeight(Constants.Sizes.CardHeight))
@@ -446,8 +451,10 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         if tasks.count == 2 {
             backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(topCard, offset: 20)!)
         } else {
-            backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(otherCards[tasks.count - 3], offset: 20)!)
+            backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(otherCards.last!, offset: 20)!)
         }
+        
+        otherCards.append(card)
         
         view.sendSubviewToBack(card)
         

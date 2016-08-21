@@ -52,7 +52,7 @@
 		280003831D683D670078340D = {
 			isa = PBXGroup;
 			children = (
-				2800038E1D683D670078340D /* Qu */,
+				2800038E1D683D670078340D /* Zen List */,
 				2800038D1D683D670078340D /* Products */,
 			);
 			sourceTree = "<group>";
@@ -65,7 +65,7 @@
 			name = Products;
 			sourceTree = "<group>";
 		};
-		2800038E1D683D670078340D /* Qu */ = {
+		2800038E1D683D670078340D /* Zen List */ = {
 			isa = PBXGroup;
 			children = (
 				280003A41D683D730078340D /* Model */,
@@ -79,6 +79,7 @@
 				2800039E1D683D670078340D /* Info.plist */,
 				280003961D683D670078340D /* Qu.xcdatamodeld */,
 			);
+			name = "Zen List";
 			path = Qu;
 			sourceTree = "<group>";
 		};
