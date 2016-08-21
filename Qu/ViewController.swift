@@ -162,7 +162,13 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         for imageView in [doneImageView, deleteImageView] {
             imageView.sizeToWidthAndHeight(82)
             imageView.centerHorizontallyInSuperview()
-            imageView.pinToTopEdgeOfSuperview(offset: 50)
+            
+            // iPhone 5, 5S
+            if self.view.frame.size.height <= 600 {
+                imageView.pinToTopEdgeOfSuperview(offset: 25)
+            } else {
+                imageView.pinToTopEdgeOfSuperview(offset: 50)
+            }
         }
         
         verticalScrollView.pinToTopEdgeOfSuperview()
@@ -186,9 +192,16 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         view.bringSubviewToFront(horizontalScrollView)
         
-        summaryView.pinToSideEdgesOfSuperview(offset: 60)
+        // iPhone 5, 5S
+        if self.view.frame.size.height <= 600 {
+            summaryView.pinToSideEdgesOfSuperview(offset: 20)
+        } else {
+            summaryView.pinToSideEdgesOfSuperview(offset: 60)
+        }
+        
+        
         summaryView.sizeToHeight(325)
-        summaryView.centerInSuperview(offset: -20)
+        summaryView.centerVerticallyInSuperview(offset: -20)
     }
     
     // MARK: - Navigation
@@ -300,6 +313,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     private func horizontalScrollViewDidScroll() {
         let offset = horizontalScrollView.contentOffset.x - self.view.frame.size.width
         
+        print(offset)
+        
         // "Done" swipe
         if offset < 0 {
             doneImageView.layer.opacity = -Float(offset) / 100.0
@@ -360,7 +375,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             return
         }
         
-        if horizontalScrollView.contentOffset.x == 0 {
+        if horizontalScrollView.contentOffset.x <= 0 {
             didFinishTask()
             
             doneImageView.layer.opacity = 1
@@ -368,7 +383,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             UIView.animateWithDuration(0.25, animations: {
                 self.doneImageView.layer.opacity = 0
             })
-        } else if horizontalScrollView.contentOffset.x == 2 * self.view.frame.size.width {
+        } else if horizontalScrollView.contentOffset.x >= 2 * self.view.frame.size.width {
             didDeleteTask()
             
             deleteImageView.layer.opacity = 1
@@ -451,6 +466,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      */
     func didFinishTask() {
         let task = TaskQueue.pop()!
+        print("Did finish task: \(task)")
         Analytics.sharedInstance.recordTask(task)
     }
     

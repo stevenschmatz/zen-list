@@ -68,8 +68,6 @@ class Analytics {
         
         let result = try! managedContext.executeFetchRequest(fetchRequest)
         
-        print(result)
-        
         return result as! [NSManagedObject]
     }
     
