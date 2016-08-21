@@ -195,6 +195,10 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         // iPhone 5, 5S
         if self.view.frame.size.height <= 600 {
             summaryView.pinToSideEdgesOfSuperview(offset: 20)
+        // iPhone 6
+        } else if self.view.frame.size.height <= 700 {
+            summaryView.pinToSideEdgesOfSuperview(offset: 40)
+        // iPhone 6+
         } else {
             summaryView.pinToSideEdgesOfSuperview(offset: 60)
         }
