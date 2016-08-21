@@ -42,6 +42,13 @@ class StackCardView: UIView {
         label.text = task
     }
     
+    /**
+     Sets the amount of fade. White is 0, purple is 1.
+     */
+    func setColorFadeAmount(ratio: CGFloat) {
+        backgroundColor = UIColor(hue: 267/360.0, saturation: min(ratio, 1), brightness: 1, alpha: 1.0)
+    }
+    
     // MARK: - Layout
     
     override func updateConstraints() {

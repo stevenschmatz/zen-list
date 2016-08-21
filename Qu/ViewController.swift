@@ -101,25 +101,37 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return view
     }()
     
-    private lazy var otherCardsContainer: UIView = {
-        let view = UIView()
-        view.layer.opacity = 0.85
-        self.view.addSubview(view)
-        return view
+    private lazy var otherCards: [StackCardView] = {
+        
+        var cards: [StackCardView] = []
+        
+        let tasks: [Task] = [Task("One"), Task("Two"), Task("Three"), Task("Four")]
+        
+        for (index, task) in tasks.enumerate() {
+            if index == 0 {
+                continue
+            }
+            
+            let card = StackCardView()
+            card.setTask(task)
+            card.setColorFadeAmount(CGFloat(index) * 0.1)
+            cards.append(card)
+            self.view.addSubview(card)
+        }
+        
+        return cards
     }()
     
     // MARK: - Layout
     
-    private lazy var containerTopConstraint: NSLayoutConstraint? = nil
     private lazy var topCardWidthConstraint: NSLayoutConstraint? = nil
     private lazy var topCardVerticalCenterConstraint: NSLayoutConstraint? = nil
+    private lazy var backCardTopConstraints: [NSLayoutConstraint] = []
+    private lazy var backCardHeightConstraints: [NSLayoutConstraint] = []
+    private lazy var backCardWidthConstraints: [NSLayoutConstraint] = []
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
-        
-        containerTopConstraint = otherCardsContainer.pinToTopEdgeOfSuperview()
-        otherCardsContainer.pinToSideEdgesOfSuperview()
-        otherCardsContainer.sizeToHeight(self.view.frame.size.height)
         
         addButton.pinToBottomEdgeOfSuperview()
         addButton.pinToSideEdgesOfSuperview()
@@ -144,6 +156,22 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         verticalScrollView.sizeToWidth(self.view.frame.size.width)
         verticalScrollView.sizeToHeight(self.view.frame.size.height - Constants.Sizes.ButtonHeight)
         verticalScrollView.pinToLeftEdgeOfSuperview(offset: self.view.frame.size.width)
+        
+        for (index, card) in otherCards.enumerate() {
+            backCardHeightConstraints.append(card.sizeToHeight(Constants.Sizes.CardHeight))
+            backCardWidthConstraints.append(card.sizeToWidth(self.view.frame.size.width - 60))
+            card.centerHorizontallyInSuperview()
+            
+            if index == 0 {
+                backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(topCard, offset: 20)!)
+            } else {
+                backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(otherCards[index - 1], offset: 20)!)
+            }
+            
+            view.sendSubviewToBack(card)
+        }
+        
+        view.bringSubviewToFront(horizontalScrollView)
     }
     
     // MARK: - Navigation
@@ -165,7 +193,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     }
     
     func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        
         if scrollView == verticalScrollView {
             verticalScrollViewDidEndDecelerating()
         } else if scrollView == horizontalScrollView {
@@ -178,8 +205,15 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      */
     private func verticalScrollViewDidScroll() {
         let offset = verticalScrollView.contentOffset.y
+        
+        guard offset > 0 else {
+            return
+        }
+        
         let maxOffset = self.view.frame.size.height - Constants.Sizes.ButtonHeight
         let ratio = offset / maxOffset
+        
+        // Increase width of cards
         
         let minimumWidth = self.view.frame.size.width - 60
         let maximumWidth = self.view.frame.size.width
@@ -189,11 +223,45 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         let newWidth = widthDifference * ratio + minimumWidth
         
         topCardWidthConstraint?.constant = newWidth
-        self.view.setNeedsLayout()
+        
+        for constraint in backCardWidthConstraints {
+            constraint.constant = newWidth
+        }
+        
+        // Increase top of cards
         
         let topCardOriginalTop = (self.view.frame.size.height - Constants.Sizes.ButtonHeight) / 2 - (Constants.Sizes.CardHeight / 2)
         let newTopConstant = -topCardOriginalTop * ratio
         topCardVerticalCenterConstraint?.constant = newTopConstant
+        
+        // Decrease top alignment of back cards
+        // First background card top constraint increases, and the rest decrease
+        
+        let firstBackCardTopConstraintMax: CGFloat = Constants.Sizes.CardHeight
+        
+        let backCardTopConstraintMax: CGFloat = Constants.Sizes.BackCardHeightUnfolded
+        let backCardTopConstraintMin: CGFloat = 20
+        
+        for (index, constraint) in backCardTopConstraints.enumerate() {
+            var difference: CGFloat
+            
+            if index == 0 {
+                difference = (firstBackCardTopConstraintMax - backCardTopConstraintMin)
+            } else {
+                difference = backCardTopConstraintMax - backCardTopConstraintMin
+            }
+            
+            constraint.constant = backCardTopConstraintMin + difference * ratio
+        }
+        
+        // Change sizes of back cards
+        
+        let difference = Constants.Sizes.CardHeight - Constants.Sizes.BackCardHeightUnfolded
+        for constraint in backCardHeightConstraints {
+            constraint.constant = Constants.Sizes.CardHeight - difference * ratio
+        }
+        
+        self.view.setNeedsLayout()
     }
     
     /**
@@ -212,16 +280,14 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             doneImageView.layer.opacity = 0
         }
         
-        let percentCompleted: CGFloat
+//        let percentCompleted: CGFloat
+//        
+//        if offset < 0 {
+//            percentCompleted = -offset / self.view.frame.size.width
+//        } else {
+//            percentCompleted = offset / self.view.frame.size.width
+//        }
         
-        if offset < 0 {
-            percentCompleted = -offset / self.view.frame.size.width
-        } else {
-            percentCompleted = offset / self.view.frame.size.width
-        }
-        
-        otherCardsContainer.layer.opacity = 0.85 + 0.15 * Float(percentCompleted)
-        containerTopConstraint?.constant = -15 * percentCompleted - 2
         view.setNeedsLayout()
         view.layoutIfNeeded()
     }
