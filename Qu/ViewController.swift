@@ -317,8 +317,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     private func horizontalScrollViewDidScroll() {
         let offset = horizontalScrollView.contentOffset.x - self.view.frame.size.width
         
-        print(offset)
-        
         // "Done" swipe
         if offset < 0 {
             doneImageView.layer.opacity = -Float(offset) / 100.0
@@ -470,7 +468,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      */
     func didFinishTask() {
         let task = TaskQueue.pop()!
-        print("Did finish task: \(task)")
         Analytics.sharedInstance.recordTask(task)
     }
     
@@ -478,7 +475,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
      Removes the task from the task queue, with a failure status.
      */
     func didDeleteTask() {
-        print("Deleted \(TaskQueue.pop()!)")
+        TaskQueue.pop()
     }
     
     // MARK: - TaskDelegate

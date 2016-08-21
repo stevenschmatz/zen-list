@@ -118,7 +118,8 @@ func initializeTaskQueue() {
             "When you add a task, it's pushed onto the back of the queue - the tasks you record first, you do first.",
             "When you're done with all of your tasks, you can see some numbers on your productivity. Enjoy!"
         ].reverse()
-        //NSUserDefaults.standardUserDefaults().setBool(true, forKey: "onboarding_complete")
+        
+        NSUserDefaults.standardUserDefaults().setBool(true, forKey: "onboarding_complete")
     }
 }
 
