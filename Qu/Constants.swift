@@ -18,5 +18,6 @@ struct Constants {
     
     struct Sizes {
         static let ButtonHeight: CGFloat = 64
+        static let CardHeight: CGFloat = 250
     }
 }

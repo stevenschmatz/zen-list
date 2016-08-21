@@ -14,6 +14,8 @@ protocol TaskDelegate {
 
 class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
 
+    // MARK: - viewDidLoad
+    
     override func viewDidLoad() {
         super.viewDidLoad()
         
@@ -43,7 +45,21 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return button
     }()
     
-    private lazy var scrollView: UIScrollView = {
+    private lazy var verticalScrollView: UIScrollView = {
+        let scrollView = UIScrollView()
+        
+        scrollView.pagingEnabled = true
+        let numberOfPages: CGFloat = 2
+        scrollView.contentSize = CGSizeMake(self.view.frame.size.width, numberOfPages * self.view.frame.size.height)
+        scrollView.contentOffset = CGPointMake(0, 0)
+        scrollView.showsVerticalScrollIndicator = false
+        scrollView.delegate = self
+        
+        self.horizontalScrollView.addSubview(scrollView)
+        return scrollView
+    }()
+    
+    private lazy var horizontalScrollView: UIScrollView = {
         let scrollView = UIScrollView()
         
         scrollView.pagingEnabled = true
@@ -71,10 +87,17 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return deleteImageView
     }()
     
+    // MARK: Cards
+    
     private lazy var topCard: StackCardView = {
         let view = StackCardView()
+        
+        if self.allTasksCompleted {
+            self.topCardActive = false
+        }
+        
         view.setTask(TaskQueue.allItems().last ?? "test")
-        self.scrollView.addSubview(view)
+        self.horizontalScrollView.addSubview(view)
         return view
     }()
     
@@ -85,36 +108,11 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         return view
     }()
     
-    private lazy var otherCards: [StackCardView] = []
-    
-    func addOtherCards() {
-        
-        let tasks = TaskQueue.allItems().reverse()
-        
-        for (index, task) in tasks.enumerate() {
-            
-            // Top card is shown already
-            if index == 0 {
-                continue
-            }
-            
-            let view = StackCardView()
-            view.setTask(task)
-            self.otherCardsContainer.addSubview(view)
-            
-            view.sizeToWidth(self.view.frame.size.width - 60)
-            view.sizeToHeight(250)
-            view.centerVerticallyInSuperview(offset: CGFloat(TaskQueue.allItems().count - index - 2) * 15)
-            view.centerHorizontallyInSuperview()
-            view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(TaskQueue.allItems().count - index - 1), brightness: 1, alpha: 1.0)
-            
-            otherCards.append(view)
-        }
-    }
-    
     // MARK: - Layout
     
     private lazy var containerTopConstraint: NSLayoutConstraint? = nil
+    private lazy var topCardWidthConstraint: NSLayoutConstraint? = nil
+    private lazy var topCardVerticalCenterConstraint: NSLayoutConstraint? = nil
     
     override func updateViewConstraints() {
         super.updateViewConstraints()
@@ -123,26 +121,29 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         otherCardsContainer.pinToSideEdgesOfSuperview()
         otherCardsContainer.sizeToHeight(self.view.frame.size.height)
         
-        addOtherCards()
-        
         addButton.pinToBottomEdgeOfSuperview()
         addButton.pinToSideEdgesOfSuperview()
-        addButton.sizeToHeight(64)
+        addButton.sizeToHeight(Constants.Sizes.ButtonHeight)
         
-        scrollView.pinToTopEdgeOfSuperview()
-        scrollView.pinToSideEdgesOfSuperview()
-        scrollView.positionAboveItem(addButton)
+        horizontalScrollView.pinToTopEdgeOfSuperview()
+        horizontalScrollView.pinToSideEdgesOfSuperview()
+        horizontalScrollView.positionAboveItem(addButton)
         
-        topCard.centerVerticallyInSuperview()
+        topCardVerticalCenterConstraint = topCard.centerVerticallyInSuperview()
         topCard.centerHorizontallyInSuperview(offset: self.view.frame.size.width)
-        topCard.sizeToWidth(self.view.frame.size.width - 60)
-        topCard.sizeToHeight(250)
+        topCardWidthConstraint = topCard.sizeToWidth(self.view.frame.size.width - 60)
+        topCard.sizeToHeight(Constants.Sizes.CardHeight)
         
         for imageView in [doneImageView, deleteImageView] {
             imageView.sizeToWidthAndHeight(82)
             imageView.centerHorizontallyInSuperview()
             imageView.pinToTopEdgeOfSuperview(offset: 50)
         }
+        
+        verticalScrollView.pinToTopEdgeOfSuperview()
+        verticalScrollView.sizeToWidth(self.view.frame.size.width)
+        verticalScrollView.sizeToHeight(self.view.frame.size.height - Constants.Sizes.ButtonHeight)
+        verticalScrollView.pinToLeftEdgeOfSuperview(offset: self.view.frame.size.width)
     }
     
     // MARK: - Navigation
@@ -156,7 +157,51 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     // MARK: - UIScrollViewDelegate Methods
     
     func scrollViewDidScroll(scrollView: UIScrollView) {
-        let offset = scrollView.contentOffset.x - self.view.frame.size.width
+        if scrollView == verticalScrollView {
+            verticalScrollViewDidScroll()
+        } else if scrollView == horizontalScrollView {
+            horizontalScrollViewDidScroll()
+        }
+    }
+    
+    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
+        
+        if scrollView == verticalScrollView {
+            verticalScrollViewDidEndDecelerating()
+        } else if scrollView == horizontalScrollView {
+            horizontalScrollViewDidEndDecelerating()
+        }
+    }
+    
+    /**
+     Responsible for unfolding the cards into the visual list.
+     */
+    private func verticalScrollViewDidScroll() {
+        let offset = verticalScrollView.contentOffset.y
+        let maxOffset = self.view.frame.size.height - Constants.Sizes.ButtonHeight
+        let ratio = offset / maxOffset
+        
+        let minimumWidth = self.view.frame.size.width - 60
+        let maximumWidth = self.view.frame.size.width
+        
+        let widthDifference = maximumWidth - minimumWidth
+        
+        let newWidth = widthDifference * ratio + minimumWidth
+        
+        topCardWidthConstraint?.constant = newWidth
+        self.view.setNeedsLayout()
+        
+        let topCardOriginalTop = (self.view.frame.size.height - Constants.Sizes.ButtonHeight) / 2 - (Constants.Sizes.CardHeight / 2)
+        let newTopConstant = -topCardOriginalTop * ratio
+        topCardVerticalCenterConstraint?.constant = newTopConstant
+    }
+    
+    /**
+     Responsible for handling "Done" and "Delete" fade in animations,
+     as well as moving the background cards up and increasing their opacity.
+     */
+    private func horizontalScrollViewDidScroll() {
+        let offset = horizontalScrollView.contentOffset.x - self.view.frame.size.width
         
         // "Done" swipe
         if offset < 0 {
@@ -181,32 +226,31 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         view.layoutIfNeeded()
     }
     
-    func scrollViewDidEndDecelerating(scrollView: UIScrollView) {
-        guard scrollView.contentOffset.x != self.view.frame.size.width else {
+    private func verticalScrollViewDidEndDecelerating() {
+        
+    }
+    
+    private func horizontalScrollViewDidEndDecelerating() {
+        guard horizontalScrollView.contentOffset.x != self.view.frame.size.width else {
             return
         }
         
-        if scrollView.contentOffset.x == 0 {
+        if horizontalScrollView.contentOffset.x == 0 {
             didFinishTask()
             
             doneImageView.layer.opacity = 1
             
-            UIView.animateWithDuration(0.25, animations: { 
+            UIView.animateWithDuration(0.25, animations: {
                 self.doneImageView.layer.opacity = 0
             })
         } else {
             didDeleteTask()
             
             deleteImageView.layer.opacity = 1
-
-            UIView.animateWithDuration(0.25, animations: { 
+            
+            UIView.animateWithDuration(0.25, animations: {
                 self.deleteImageView.layer.opacity = 0
             })
-        }
-        
-        if otherCards.count > 0 {
-            otherCards.first?.removeFromSuperview()
-            otherCards.removeFirst()
         }
         
         if allTasksCompleted {
@@ -215,7 +259,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             topCard.setTask(TaskQueue.allItems().last!)
         }
         
-        scrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
+        horizontalScrollView.contentOffset = CGPointMake(self.view.frame.size.width, 0)
     }
     
     private var allTasksCompleted: Bool {
@@ -226,8 +270,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     
     private var topCardActive: Bool = !TaskQueue.allItems().isEmpty {
         didSet {
-            scrollView.layer.opacity = topCardActive ? 1 : 0
-            scrollView.userInteractionEnabled = topCardActive
+            horizontalScrollView.layer.opacity = topCardActive ? 1 : 0
+            horizontalScrollView.userInteractionEnabled = topCardActive
         }
     }
     
@@ -260,26 +304,6 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             topCardActive = true
             return
         }
-        
-        let view = StackCardView()
-        view.setTask(TaskQueue.allItems().first!)
-        self.otherCardsContainer.addSubview(view)
-        
-        view.sizeToWidth(self.view.frame.size.width - 60)
-        view.sizeToHeight(250)
-        view.centerVerticallyInSuperview(offset: CGFloat(otherCards.count - 1) * 15)
-        view.centerHorizontallyInSuperview()
-        
-        self.otherCardsContainer.sendSubviewToBack(view)
-        
-        view.backgroundColor = UIColor(hue: 265/360.0, saturation: 0.10 * CGFloat(otherCards.count), brightness: 1, alpha: 1.0)
-        view.layer.opacity = 0
-        
-        UIView.animateWithDuration(0.25) {
-            view.layer.opacity = 1
-        }
-        
-        otherCards.insert(view, atIndex: 0)
     }
 }
 
