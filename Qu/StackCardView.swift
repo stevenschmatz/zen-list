@@ -31,6 +31,9 @@ class StackCardView: UIView {
         label.textAlignment = .Left
         label.lineBreakMode = .ByWordWrapping
         label.numberOfLines = 0
+        label.lineBreakMode = .ByTruncatingTail
+        label.adjustsFontSizeToFitWidth = true
+        label.minimumScaleFactor = 0.8
         
         self.addSubview(label)
         return label
@@ -103,6 +106,6 @@ class StackCardView: UIView {
         super.updateConstraints()
         
         label.pinToSideEdgesOfSuperview(offset: 30)
-        label.centerVerticallyInSuperview()
+        label.pinToTopAndBottomEdgesOfSuperview(offset: 30)
     }
 }
