@@ -42,11 +42,28 @@ class StackCardView: UIView {
         label.text = task
     }
     
-    /**
-     Sets the amount of fade. White is 0, purple is 1.
-     */
-    func setColorFadeAmount(ratio: CGFloat) {
-        backgroundColor = UIColor(hue: 267/360.0, saturation: min(ratio, 1), brightness: 1, alpha: 1.0)
+    var ratio: CGFloat = 0 {
+        didSet {
+            // Sets the amount of fade. White is 0, purple is 1.
+            backgroundColor = UIColor(hue: 267/360.0, saturation: min(ratio, 1), brightness: 1, alpha: 1.0)
+            label.textColor = UIColor(white: 0, alpha: max(0.15, 1 - ratio * 1.30))
+        }
+    }
+    
+    func setFontSize(size: CGFloat) {
+        label.font = UIFont.systemFontOfSize(size)
+    }
+    
+    func fadeInText() {
+        UIView.animateWithDuration(0.2) {
+            self.label.layer.opacity = 1
+        }
+    }
+    
+    func fadeOutText() {
+        UIView.animateWithDuration(0.2) { 
+            self.label.layer.opacity = 0
+        }
     }
     
     // MARK: - Layout

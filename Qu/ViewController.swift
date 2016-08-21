@@ -53,6 +53,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         scrollView.contentSize = CGSizeMake(self.view.frame.size.width, numberOfPages * self.view.frame.size.height)
         scrollView.contentOffset = CGPointMake(0, 0)
         scrollView.showsVerticalScrollIndicator = false
+        scrollView.bounces = false
         scrollView.delegate = self
         
         self.horizontalScrollView.addSubview(scrollView)
@@ -105,7 +106,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         
         var cards: [StackCardView] = []
         
-        let tasks: [Task] = [Task("One"), Task("Two"), Task("Three"), Task("Four")]
+        let tasks: [Task] = [Task("One"), Task("Two"), Task("Three"), Task("Four"), Task("Five"), Task("Six")]
         
         for (index, task) in tasks.enumerate() {
             if index == 0 {
@@ -114,7 +115,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             
             let card = StackCardView()
             card.setTask(task)
-            card.setColorFadeAmount(CGFloat(index) * 0.1)
+            card.ratio = CGFloat(index) * 0.1
             cards.append(card)
             self.view.addSubview(card)
         }
@@ -206,7 +207,7 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     private func verticalScrollViewDidScroll() {
         let offset = verticalScrollView.contentOffset.y
         
-        guard offset > 0 else {
+        guard offset >= 0 else {
             return
         }
         
@@ -261,6 +262,18 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
             constraint.constant = Constants.Sizes.CardHeight - difference * ratio
         }
         
+        // Change size of font of back cards
+        
+        if offset == 0 {
+            for card in otherCards {
+                card.setFontSize(20)
+            }
+        } else {
+            for card in otherCards {
+                card.setFontSize(16)
+            }
+        }
+        
         self.view.setNeedsLayout()
     }
     
@@ -293,7 +306,19 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
     }
     
     private func verticalScrollViewDidEndDecelerating() {
+        for card in otherCards {
+            card.fadeInText()
+        }
+    }
+    
+    func scrollViewWillBeginDragging(scrollView: UIScrollView) {
+        guard scrollView == verticalScrollView else {
+            return
+        }
         
+        for card in otherCards {
+            card.fadeOutText()
+        }
     }
     
     private func horizontalScrollViewDidEndDecelerating() {
