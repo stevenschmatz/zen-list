@@ -8,10 +8,16 @@
 
 import UIKit
 
+/**
+ Used in conjunction with ComposeViewController.swift
+ */
 protocol TaskDelegate {
     func didAddTask()
 }
 
+/**
+ The main view controller for the app, responsible for displaying and interacting with tasks.
+ */
 class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
 
     // MARK: - viewDidLoad

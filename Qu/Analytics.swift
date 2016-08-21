@@ -10,13 +10,10 @@ import Foundation
 import UIKit
 import CoreData
 
+/**
+ The manager responsible for keeping track of how many tasks were done per day, per week, and per month.
+ */
 class Analytics {
-    
-    // MARK: - Init
-    
-    init() {
-        
-    }
     
     // MARK: - Singleton
     
@@ -59,6 +56,9 @@ class Analytics {
         return NSEntityDescription.entityForName("Task", inManagedObjectContext: self.managedContext)!
     }()
     
+    /**
+     Returns all completed task objects after the given NSDate.
+     */
     func fetchTaskObjects(fromDate date: NSDate) -> [NSManagedObject] {
         let fetchRequest = NSFetchRequest(entityName: "Task")
         let sortDescriptor = NSSortDescriptor(key: "date", ascending: true)
@@ -71,6 +71,9 @@ class Analytics {
         return result as! [NSManagedObject]
     }
     
+    /**
+     Stores a completed task in Core Data.
+     */
     func recordTask(task: Task) {
         let taskObject = NSManagedObject(entity: taskEntity, insertIntoManagedObjectContext: managedContext)
         

@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+ The view controller responsible for the entry of tasks.
+ */
 class ComposeViewController: UIViewController, UITextViewDelegate {
 
     override func viewDidLoad() {

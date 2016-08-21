@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+ The view that's shown after all tasks are completed. Contains the number of tasks completed per day, week, and month.
+ */
 class SummaryView: UIView {
 
     init() {

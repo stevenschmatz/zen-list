@@ -8,6 +8,9 @@
 
 import UIKit
 
+/**
+ Represents a task card.
+ */
 class StackCardView: UIView {
     
     // MARK: - Layout
@@ -45,6 +48,10 @@ class StackCardView: UIView {
         label.text = task
     }
     
+    /**
+     An externally controlled number that is based on the position of the card.
+     Controls color attributes to give a "fade out" effect.
+     */
     var ratio: CGFloat = 0 {
         didSet {
             let alpha: CGFloat
