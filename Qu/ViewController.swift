@@ -505,7 +505,8 @@ class ViewController: UIViewController, TaskDelegate, UIScrollViewDelegate {
         card.centerHorizontallyInSuperview()
         
         if tasks.count == 2 {
-            backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(topCard, offset: 20)!)
+            backCardTopConstraints = [card.pinTopEdgeToTopEdgeOfItem(topCard, offset: 20)!]
+            
         } else {
             backCardTopConstraints.append(card.pinTopEdgeToTopEdgeOfItem(otherCards.last!, offset: 20)!)
         }
