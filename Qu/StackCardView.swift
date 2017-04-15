@@ -13,7 +13,7 @@ import UIKit
  */
 class StackCardView: UIView {
     
-    // MARK: - Layout
+    // MARK: - Init
     
     init() {
         super.init(frame: CGRectZero)
